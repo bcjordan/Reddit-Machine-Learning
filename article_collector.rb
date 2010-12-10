@@ -14,15 +14,11 @@ module RedditML
         def initialize(url)
             @list_url = url
             
-            @parser = RedRuby::Parser.new(@list_url)
-            
-            sleep 2 # Wait 2 seconds
-            
             @submissions = {}
         end
         
         def refresh_submissions
-            if @submissions == {}
+            if @submissions == {} # if this is our initial loading
                 @refresh_url = @list_url
             else
                 generate_refresh_url
@@ -32,6 +28,8 @@ module RedditML
             @parser.parse_submissions
             
             @parser.submissions.each do |submission|
+                # Translate into CSV at this point?
+                # If this is a new submission
                 @submissions[submission.self_id] = [] unless @submissions[submission.self_id]
                 @submissions[submission.self_id] << submission
             end

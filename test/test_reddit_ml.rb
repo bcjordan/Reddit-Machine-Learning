@@ -3,13 +3,19 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class RedditMLTest < Test::Unit::TestCase
 
     REDDIT_URL = "http://www.reddit.com/new/.json?sort=new"
-    
-    
+    DEBUG = false
     # Unit tests
+    
+    should "get flesch and fog metrics for strings" do
+        assert "hi".readability
+        assert "hi".readability.flesch
+        assert "hi".readability.fog
+    end
     
     context "an article collector" do
         setup do
             @collector = RedditML::ArticleCollector.new(REDDIT_URL)
+            @collector.refresh_submissions
         end
         
         should "create a user" do
@@ -41,29 +47,29 @@ class RedditMLTest < Test::Unit::TestCase
             context "with refreshed submission objects" do
                 setup do
                     # Test takes 2s * 25 articles = 50 seconds
+                    @repeats = 2
                     
-                    10.times do |i|
-                        print "refresh ##{i}";
-                        sleep 60
-                        puts ""
+                    @repeats.times do |i|
+                        print "refresh ##{i}" if DEBUG
+                        sleep 5
+                        puts "" if DEBUG
                         @collector.refresh_submissions
                     end
                     
                     @submissions_refreshed = @collector.submissions
                 end
                    
-                should "have a second sample of same submissions" do
+                should "have a two samples of same submissions" do
+                    pp @submissions_refreshed
+                    # Number of submissions being tracked
                     assert_equal 25, @submissions_refreshed.size
+                    # Number of samples from each submission
+                    assert_equal 2, @submissions_refreshed[0].size
+                    # Two samples from the same article should have the same
+                    # 
                     @submissions_refreshed.each do |key, submission|
                         assert_equal key, submission[0].self_id
                         assert_equal key, submission[1].self_id
-                        
-                        change_up = submission[9].ups - submission[0].ups
-                        change_down = submission[9].downs - submission[0].downs
-                        
-                        if change_up != 0 or change_down != 0
-                            puts "#{key} up: #{change_up}, down: #{change_down}: #{submission[0].title}"
-                        end
                     end
                 end
             end
