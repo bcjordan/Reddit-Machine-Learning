@@ -42,8 +42,8 @@ module RedditML
         end
             
         def ratio(up,down)
-            return up.to_f/down.to_f unless down == 0
-            return 0 if down == 0
+            return up.to_f/(up.to_f+down.to_f) unless down == 0
+            return 0 if down == 0 && up == 0
             return 1 if down == 0 && up > 0
         end
         
