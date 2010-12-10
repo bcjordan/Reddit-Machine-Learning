@@ -17,6 +17,10 @@ module RedditML
             @submissions = {}
         end
         
+        def load_csv(filename)
+            
+        end
+        
         def refresh_submissions
             if @submissions == {} # if this is our initial loading
                 @refresh_url = @list_url
