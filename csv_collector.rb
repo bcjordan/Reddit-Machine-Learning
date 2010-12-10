@@ -80,32 +80,6 @@ module RedditML
             return indexed_submissions
         end
         
-        
-=begin        
-        def refresh_submissions
-            if @submissions == {} # if this is our initial loading
-                @refresh_url = @list_url
-            else
-                generate_refresh_url
-            end
-            
-            @parser = RedRuby::Parser.new(@refresh_url)
-            @parser.parse_submissions
-            
-            @parser.submissions.each do |submission|
-                # Translate into CSV at this point?
-                # If this is a new submission
-                @submissions[submission.self_id] = [] unless @submissions[submission.self_id]
-                @submissions[submission.self_id] << submission
-            end
-        end
-=end
-
-        # Downloads a new copy of submission[0], stores it in submission
-#        def refresh_submission submission
-#            submission << RedRuby::Submission.new(load_json(submission[0].json_url)[0]["data"]["children"][0]["data"])
-#        end
-        
         # Uses @submissions to gennerate a @refresh_url
         def generate_refresh_url
             url = SUBMISSION_URL_PREFIX
